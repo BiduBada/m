@@ -67,7 +67,7 @@ async function getMessages() {
         const messageId = `msg-id-${msg.id}`;
 
         // Si déjà affiché, on ignore
-        if (document.getElementById(messageId)) return;
+        if (document.getElementById(messageId)) return false;
 
         // Affiche le message
         generateMessage(container, msg, messageId);
@@ -78,6 +78,8 @@ async function getMessages() {
         }
 
         lastMessageId = msg.id;
+
+        scrollToBottom();
     });
 }
 
@@ -90,8 +92,8 @@ function generateDateText(timestamp) {
     const diffTime = now - date;
     const diffJours = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-    let dateText = "aujourd’hui";
-    if (diffJours === 1) dateText = "il y a 1 jour";
+    let dateText = "Aujourd’hui";
+    if (diffJours === 1) dateText = "Hier";
     else if (diffJours > 1) dateText = `il y a ${diffJours} jours`;
 
     return `${heure} – ${dateText}`;
@@ -134,16 +136,19 @@ async function sendMessage() {
     });
 
     input.value = "";
-    await getMessages();
-    scrollToBottom();
+    actualiseMessage()
     input.focus();
+}
+
+async function actualiseMessage() {
+    (async () => {
+        await getMessages();
+        scrollToBottom();
+    })();
 }
 
 // ➤ Actualise toutes les secondes
 setInterval(getMessages, 1000);
 
 // ➤ Initialisation
-(async () => {
-    await getMessages();
-    scrollToBottom();
-})();
+actualiseMessage()
