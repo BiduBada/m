@@ -4,6 +4,8 @@
     --msg-content-me-bgk-color: #008cff;
     --msg-content-color:#ffffff;
 
+    --button-send-color:  #017add;
+
     --msg-content-font: Calibri;
 
     --global-bkg-color: #000000;
@@ -37,7 +39,23 @@ h1 {
 
     font-size: 60px;
 
+    transform: translateY(-100px); 
+    opacity: 0;
 
+    animation: h1-spawn 0.5s 0.7s ease-out forwards;
+
+
+}
+
+@keyframes h1-spawn {
+    0% {
+        transform: translateY(-100px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0px);
+        opacity: 1;
+    }
 }
 
 #messages {
@@ -132,7 +150,7 @@ h1 {
 
 
     color: var(--msg-content-color);
-    background-color: var(--msg-content-bgk-color);
+    background-color: var(--button-send-color);
     flex-shrink: 0;           /* Ne pas se rétrécir */
 
     font-size: var(--msg-content-text-size);
@@ -164,6 +182,7 @@ h1 {
     padding: 40px;
     margin: 0; 
     border-radius: 60px;
+    border-bottom-left-radius: 0;
 
     word-wrap: break-word;   /* Coupe les mots trop longs */
     white-space: normal;     /* Autorise les retours à la ligne */
@@ -173,19 +192,39 @@ h1 {
     /* font-weight: bold; */
     font-family: var(--msg-content-font);
     color: var(--msg-content-color);
+    font-weight: 600;
 
     font-size: var(--msg-content-text-size);
 
 }
 
-
 .msg-content.me {
-  
+    border-radius: 60px;
+    border-bottom-right-radius: 0;
     background-color: var(--msg-content-me-bgk-color);
-     color: var(--msg-content-color) 
-     
+    background: linear-gradient(
+    to right,
+    var(--msg-content-me-bgk-color) 0%,          /* bleu à gauche */
+    var(--msg-content-me-bgk-color) 40%,       /* bleu jusqu’à 49.5% */
+    rgba(255, 255, 255, 1) 50%,                   /* blanc très fin à 50% */
+    var(--msg-content-me-bgk-color) 60%,       /* bleu juste après le blanc */
+    var(--msg-content-me-bgk-color) 100%         /* bleu jusqu’à la fin */
+    );
+    background-size: 300% 100%;
+    background-position: 200% 50%; /* position de départ à droite */
+    color: var(--msg-content-color);
+    
+    animation: moveGradient 0.5s linear forwards; /* une seule fois, ne revient pas en arrière */
 }
 
+@keyframes moveGradient {
+    from {
+        background-position: 200% 50%; /* au départ à droite */
+    }
+    to {
+        background-position: 0% 50%; /* à gauche à la fin */
+    }
+}
 
 
 
@@ -214,9 +253,23 @@ h1 {
 }
 
 .msg-date {
+    opacity: 0;
     margin: 2px;
     font-size: var(--msg-date-text-size);
     font-family: var(--msg-content-font);;
     font-weight: bold;
-    color: gray
+    color: gray;
+    animation: msg-date-spawn 0.7s 1.4s ease-out forwards;
 }
+
+@keyframes msg-date-spawn {
+    0% {
+       
+        opacity: 0;
+    }
+    100% {
+       
+        opacity: 1;
+    }
+}
+
