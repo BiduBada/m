@@ -55,10 +55,14 @@ def save_messages(messages):
 
 @app.route("/new_message", methods=["GET"])
 def new_message():
-    lastLen = int(request.args.get("lastLen"))
-    if len(load_messages()) > lastLen :
-        return str(len(load_messages()))
-    return  str("NO")
+    try:
+        lastLen = int(eval(request.args.get("lastLen")))
+        if len(load_messages()) > lastLen :
+            return str(len(load_messages()))
+        return  str("NO")
+    except:
+        return  str("NO")
+    
 
 @app.route("/messages", methods=["GET"])
 def get_messages():
