@@ -57,7 +57,9 @@ function showNotification(user, text) {
 }
 
 // ➤ Récupère les messages depuis le serveur
-async function getMessages() {
+async function getMessages(first) {
+    const h1 = document.getElementById("h1")
+    h1.classList.add("waiting")
     const res = await fetch("/messages");
     const messages = await res.json();
 
@@ -70,7 +72,7 @@ async function getMessages() {
         if (document.getElementById(messageId)) return false;
 
         // Affiche le message
-        generateMessage(container, msg, messageId);
+        generateMessage(container, msg, messageId, first);
 
         // Notification si nouveau message et onglet inactif
         if (lastMessageId && msg.id !== lastMessageId && !documentHasFocus && msg.user !== username) {
@@ -81,6 +83,7 @@ async function getMessages() {
 
         scrollToBottom();
     });
+     h1.classList.remove("waiting")
 }
 
 // ➤ Génère le texte de la date
@@ -100,14 +103,13 @@ function generateDateText(timestamp) {
 }
 
 // ➤ Génère un message dans le DOM
-function generateMessage(container, msg, messageId) {
+function generateMessage(container, msg, messageId, first) {
     const dateText = generateDateText(msg.timestamp);
     const isOwner = (msg.user === username);
-
     const messageHTML = `
         <div class="msg-fram ${isOwner ? "me" : ""}" id="${messageId}">
             ${isOwner ? "" : `<p class="pseudo"><strong>${msg.user}</strong></p>`}
-            <p class="msg-content ${isOwner ? "me" : ""}">${msg.text}</p>
+            <p class="msg-content ${isOwner ? "me" : ""} ${first ? "no-anim" : ""}">${msg.text}</p>
             <p class="msg-date">
                 ${dateText}
             </p>
@@ -119,9 +121,17 @@ function generateMessage(container, msg, messageId) {
 
 // ➤ Envoie un message
 async function sendMessage() {
+   
     const input = document.getElementById("message");
     const text = input.value;
+   
     if (!text.trim()) return;
+
+    let button_icon = document.getElementById("button-icon");
+    button_icon.classList.add("move");
+    input.value = "";
+    input.focus();
+    
 
     const timestamp = new Date().toISOString();
 
@@ -135,9 +145,20 @@ async function sendMessage() {
         })
     });
 
-    input.value = "";
+
+    
+  
+    button_icon.classList.remove("move");
+    button_icon.classList.add("exit");
+
+    // Réinitialise après l'animation (0.4s)
+    setTimeout(() => {
+        button_icon.classList.remove("exit");
+        button_icon.style.opacity = "1";
+        button_icon.style.transform = "translateY(0)";
+    }, 1000);
     actualiseMessage()
-    input.focus();
+   
 }
 
 async function actualiseMessage() {
@@ -151,4 +172,7 @@ async function actualiseMessage() {
 setInterval(getMessages, 1000);
 
 // ➤ Initialisation
-actualiseMessage()
+(async () => {
+        await getMessages(true);
+        scrollToBottom();
+    })();
