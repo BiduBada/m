@@ -106,10 +106,33 @@ function generateDateText(timestamp) {
 function generateMessage(container, msg, messageId, first) {
     const dateText = generateDateText(msg.timestamp);
     const isOwner = (msg.user === username);
+    
+    let tags = "";
+    if (msg.text.includes("$red")) {
+        tags+="red ";
+        msg.text = msg.text.replaceAll("$red", "");
+
+    }
+    if (msg.text.includes("$dancing")) {
+        tags+="dancing ";
+        msg.text = msg.text.replaceAll("$dancing", "");
+ 
+    }
+    if (msg.text.includes("$huge")) {
+        tags+="huge ";
+        msg.text = msg.text.replaceAll("$huge", "");
+ 
+    }
+    if (msg.text.includes("$flame")) {
+        tags+="flame ";
+        msg.text = msg.text.replaceAll("$flame", "");
+ 
+    }
+    const spawnAnim = isOwner && !first && tags == ""
     const messageHTML = `
         <div class="msg-fram ${isOwner ? "me" : ""}" id="${messageId}">
             ${isOwner ? "" : `<p class="pseudo"><strong>${msg.user}</strong></p>`}
-            <p class="msg-content ${isOwner ? "me" : ""} ${first ? "no-anim" : ""}">${msg.text}</p>
+            <p class="msg-content ${tags} ${isOwner ? "me" : ""} ${spawnAnim ? "spawn-anim" : ""}">${msg.text}</p>
             <p class="msg-date">
                 ${dateText}
             </p>
@@ -117,6 +140,13 @@ function generateMessage(container, msg, messageId, first) {
     `;
 
     container.insertAdjacentHTML("beforeend", messageHTML);
+        
+
+//     if (!first) {
+//         let message_content = document.getElementById(messageId).querySelector(".msg-content");
+//         setInterval( message_content.classList.remove("spawn-anim"), 10000);
+//     }
+// }
 }
 
 // ➤ Envoie un message
